@@ -10,6 +10,6 @@ public class PetStoreCustomer {
     private String customerFirstName;
     private String customerLastName;
     private String customerEmail;
-    
+
     // Add any additional fields as needed
 }

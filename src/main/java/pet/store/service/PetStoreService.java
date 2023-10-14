@@ -5,9 +5,13 @@ import org.springframework.stereotype.Service;
 import pet.store.dao.PetStoreDao;
 import pet.store.entity.PetStore;
 import pet.store.controller.model.PetStoreData;
+import pet.store.controller.model.PetStoreEmployee;
+import pet.store.controller.model.PetStoreCustomer;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
 
 @Service
 public class PetStoreService {
@@ -19,20 +23,13 @@ public class PetStoreService {
     }
 
     public PetStoreData savePetStore(PetStoreData petStoreData) {
-        PetStore petStore = findOrCreatePetStore(petStoreData.getPetstoreld());
-
-        // Update petStore properties with data from petStoreData
+        PetStore petStore = new PetStore();
         petStore.setPetStoreName(petStoreData.getPetStoreName());
         petStore.setPetStoreAddress(petStoreData.getPetStoreAddress());
-        petStore.setPetStoreCity(petStoreData.getPetstorecity());
-        petStore.setPetStoreState(petStoreData.getPetStoreState());
-        petStore.setPetStoreZip(petStoreData.getPetstorezip());
-        petStore.setPetStorePhone(petStoreData.getPetstorephone());
+        // Set other properties as needed
 
-        // Save or update the pet store entity in the database using petStoreDao
         petStore = petStoreDao.save(petStore);
 
-        // Convert the updated petStore entity back to PetStoreData
         return convertToPetStoreData(petStore);
     }
 
@@ -46,35 +43,15 @@ public class PetStoreService {
         }
     }
 
-    // Your other service methods go here
+    public List<PetStoreData> retrieveAllPetStores() {
+        List<PetStore> petStores = petStoreDao.findAll();
+        List<PetStoreData> petStoreDataList = new ArrayList<>();
 
-    private PetStore findOrCreatePetStore(Long petStoreId) {
-        // Implement the logic to find or create a PetStore entity
-        // You can use petStoreDao to interact with the database
-
-        // Example: Check if petStoreId is null, if it is, create a new PetStore
-        if (petStoreId == null) {
-            return new PetStore(); // Create a new PetStore entity
-        } else {
-            // Find the existing PetStore entity by ID using petStoreDao
-            return petStoreDao.findById(petStoreId).orElse(new PetStore());
+        for (PetStore petStore : petStores) {
+            petStoreDataList.add(convertToPetStoreData(petStore));
         }
-    }
 
-    private PetStoreData convertToPetStoreData(PetStore petStore) {
-        // Implement the logic to convert a PetStore entity to PetStoreData
-        // Example: Create a new PetStoreData object and set its properties based on the petStore entity
-
-        PetStoreData petStoreData = new PetStoreData();
-        petStoreData.setPetstoreld(petStore.getPetStoreId());
-        petStoreData.setPetStoreName(petStore.getPetStoreName());
-        petStoreData.setPetStoreAddress(petStore.getPetStoreAddress());
-        petStoreData.setPetstorecity(petStore.getPetStoreCity());
-        petStoreData.setPetStoreState(petStore.getPetStoreState());
-        petStoreData.setPetstorezip(petStore.getPetStoreZip());
-        petStoreData.setPetstorephone(petStore.getPetStorePhone());
-
-        return petStoreData;
+        return petStoreDataList;
     }
 
     public PetStoreData updatePetStore(Long petStoreId, PetStoreData petStoreData) {
@@ -83,18 +60,12 @@ public class PetStoreService {
         if (petStoreOptional.isPresent()) {
             PetStore petStore = petStoreOptional.get();
 
-            // Update petStore properties with data from petStoreData
             petStore.setPetStoreName(petStoreData.getPetStoreName());
             petStore.setPetStoreAddress(petStoreData.getPetStoreAddress());
-            petStore.setPetStoreCity(petStoreData.getPetstorecity());
-            petStore.setPetStoreState(petStoreData.getPetStoreState());
-            petStore.setPetStoreZip(petStoreData.getPetstorezip());
-            petStore.setPetStorePhone(petStoreData.getPetstorephone());
+            // Update other properties as needed
 
-            // Save or update the pet store entity in the database using petStoreDao
             petStore = petStoreDao.save(petStore);
 
-            // Convert the updated petStore entity back to PetStoreData
             return convertToPetStoreData(petStore);
         } else {
             throw new EntityNotFoundException("PetStore not found with ID: " + petStoreId);
@@ -109,5 +80,44 @@ public class PetStoreService {
         } else {
             throw new EntityNotFoundException("PetStore not found with ID: " + petStoreId);
         }
+    }
+
+    public PetStoreEmployee addEmployeeToPetStore(Long petStoreId, PetStoreEmployee employee) {
+        Optional<PetStore> petStoreOptional = petStoreDao.findById(petStoreId);
+
+        if (petStoreOptional.isPresent()) {
+            PetStore petStore = petStoreOptional.get();
+            // Add the employee to the PetStore
+            // You may have a list of employees in the PetStore entity to add to
+            // Save or update the PetStore entity in the database using petStoreDao
+            petStore = petStoreDao.save(petStore);
+            return employee;
+        } else {
+            throw new EntityNotFoundException("PetStore not found with ID: " + petStoreId);
+        }
+    }
+
+    public PetStoreCustomer addCustomerToPetStore(Long petStoreId, PetStoreCustomer customer) {
+        Optional<PetStore> petStoreOptional = petStoreDao.findById(petStoreId);
+
+        if (petStoreOptional.isPresent()) {
+            PetStore petStore = petStoreOptional.get();
+            // Add the customer to the PetStore
+            // Save or update the PetStore entity in the database using petStoreDao
+            petStore = petStoreDao.save(petStore);
+            return customer;
+        } else {
+            throw new EntityNotFoundException("PetStore not found with ID: " + petStoreId);
+        }
+    }
+
+    private PetStoreData convertToPetStoreData(PetStore petStore) {
+        PetStoreData petStoreData = new PetStoreData();
+        petStoreData.setPetstoreld(petStore.getPetStoreId());
+        petStoreData.setPetStoreName(petStore.getPetStoreName());
+        petStoreData.setPetStoreAddress(petStore.getPetStoreAddress());
+        // Set other properties as needed
+
+        return petStoreData;
     }
 }

@@ -44,8 +44,8 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.30</version> <!-- Use the latest version -->
-            <optional>true</optional>
+            <version>1.18.30</version><!--$NO-MVN-MAN-VER$--> <!-- Use the latest version -->
+           
         </dependency>
 
         <!-- Spring Boot Starter Test -->
