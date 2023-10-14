@@ -1,6 +1,5 @@
 package pet.store.controller;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +19,7 @@ public class PetStoreController {
     @Autowired
     private PetStoreService petStoreService;
 
+    // Create a new pet store
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PetStoreData createPetStore(@RequestBody PetStoreData petStoreData) {
@@ -27,23 +27,48 @@ public class PetStoreController {
         return petStoreService.savePetStore(petStoreData);
     }
 
-    // Add more controller methods here
+    // Add an employee to a pet store
+    @PostMapping("/{petStoreId}/employee")
+    @ResponseStatus(HttpStatus.CREATED)
+    public PetStoreEmployee addEmployeeToPetStore(@PathVariable Long petStoreId, @RequestBody PetStoreEmployee employee) {
+        log.info("Received a request to add an employee to a pet store with ID: {}", petStoreId);
+        return petStoreService.addEmployeeToPetStore(petStoreId, employee);
+    }
 
-    // 1. Get a pet store by ID
+    // Add a customer to a pet store
+    @PostMapping("/{petStoreId}/customer")
+    @ResponseStatus(HttpStatus.CREATED)
+    public PetStoreCustomer addCustomerToPetStore(@PathVariable Long petStoreId, @RequestBody PetStoreCustomer customer) {
+        log.info("Received a request to add a customer to a pet store with ID: {}", petStoreId);
+        return petStoreService.addCustomerToPetStore(petStoreId, customer);
+    }
+
+    // List all pet stores
+    @GetMapping
+    public List<PetStoreData> retrieveAllPetStores() {
+        List<PetStoreData> petStores = petStoreService.retrieveAllPetStores();
+        petStores.forEach(petStore -> {
+            petStore.getCustomers().clear();
+            petStore.getEmployees().clear();
+        });
+        return petStores;
+    }
+
+    // Get a pet store by ID
     @GetMapping("/{petStoreId}")
-    public PetStoreData getPetStore(@PathVariable Long petStoreId) {
+    public PetStoreData getPetStoreById(@PathVariable Long petStoreId) {
         log.info("Received a request to get a pet store by ID: {}", petStoreId);
         return petStoreService.getPetStoreById(petStoreId);
     }
 
-    // 2. Update an existing pet store
+    // Update an existing pet store
     @PutMapping("/{petStoreId}")
     public PetStoreData updatePetStore(@PathVariable Long petStoreId, @RequestBody PetStoreData petStoreData) {
         log.info("Received a request to update a pet store with ID: {}", petStoreId);
         return petStoreService.updatePetStore(petStoreId, petStoreData);
     }
 
-    // 3. Delete a pet store by ID
+    // Delete a pet store by ID
     @DeleteMapping("/{petStoreId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePetStore(@PathVariable Long petStoreId) {
@@ -51,25 +76,4 @@ public class PetStoreController {
         petStoreService.deletePetStore(petStoreId);
     }
 
-    @PostMapping("/pet_store/{petStoreId}/employee")
-    @ResponseStatus(HttpStatus.CREATED)
-    public PetStoreEmployee addEmployeeToPetStore(@PathVariable Long petStoreId, @RequestBody PetStoreEmployee employee) {
-        return petStoreService.addEmployeeToPetStore(petStoreId, employee);
-    }
-
-    @PostMapping("/pet_store/{petStoreId}/customer")
-    @ResponseStatus(HttpStatus.CREATED)
-    public PetStoreCustomer addCustomerToPetStore(@PathVariable Long petStoreId, @RequestBody PetStoreCustomer customer) {
-        return petStoreService.addCustomerToPetStore(petStoreId, customer);
-    }
-
-    @GetMapping("/pet_store")
-    public List<PetStoreData> retrieveAllPetStores() {
-        return petStoreService.retrieveAllPetStores();
-    }
-
-    @GetMapping("/pet_store/{petStoreId}")
-    public PetStoreData getPetStoreById(@PathVariable Long petStoreId) {
-        return petStoreService.getPetStoreById(petStoreId);
-    }
 }
